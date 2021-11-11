@@ -3,7 +3,15 @@ const express = require('express')
 const app = express()
 const port = 4000;
 const { MongoClient } = require('mongodb');
+const cors=require('cors')
+const ObjectId=require('mongodb').ObjectId;
 require('dotenv').config()
+
+
+app.use(cors());
+app.use(express.json());
+
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ufugb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 // console.log(uri)
@@ -14,12 +22,32 @@ async function run() {
       await client.connect();
       const database = client.db("insertToCarHub");
       const carHub = database.collection("CarHub");
-  
+      const purchaser=database.collection('carOrderer')
       // create a document to insert
     //   const result = await carHub.insertOne(doc);
     //   console.log(`A document was inserted with the _id: ${result.insertedId}`);
 
-    app.post('/cars',async(req,res)=>{
+    app.get('/cars',async(req,res)=>{
+        const query={}
+        const movie =  carHub.find(query);
+        const result =await movie.toArray();
+
+        res.json(result);
+    })
+    app.get('/cars/:id',async(req,res)=>{
+        const id=req.params.id;
+        const query={_id:ObjectId(id)}
+        // console.log(query)
+        const movie = await carHub.findOne(query);
+        // const result =await movie.toArray()
+        res.json(movie);
+    })
+    // taking the user data and storing them 
+    app.post('/users', async(req,res)=>{
+      const doc=req.body;
+      const result = await purchaser.insertOne(doc);
+      res.json(result);
+      console.log(result)
 
     })
 
