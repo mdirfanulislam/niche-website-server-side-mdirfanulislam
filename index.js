@@ -1,7 +1,7 @@
 
 const express = require('express')
 const app = express()
-const port = 4000;
+const port =process.env.port || 4000;
 const { MongoClient } = require('mongodb');
 const cors=require('cors')
 const ObjectId=require('mongodb').ObjectId;
@@ -14,7 +14,7 @@ app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ufugb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-// console.log(uri)
+console.log(uri)
 async function run() {
 
     try {
@@ -32,7 +32,6 @@ async function run() {
         const query={}
         const movie =  carHub.find(query);
         const result =await movie.toArray();
-
         res.json(result);
     })
     app.get('/cars/:id',async(req,res)=>{
@@ -40,6 +39,12 @@ async function run() {
         const query={_id:ObjectId(id)}
         const movie = await carHub.findOne(query);
         res.json(movie);
+    })
+    app.post('/reviews', async(req,res)=>{
+      const doc=req.body;
+      // console.log(doc);
+      const result = await reviews.insertOne(doc);
+      res.json(result);
     })
     app.get('/myorders', async(req,res)=>{
       // console.log(req.query);
@@ -54,7 +59,6 @@ async function run() {
       const query={}
       const movie =  reviews.find(query);
       const result =await movie.toArray();
-
       res.json(result);
 
     })
@@ -75,7 +79,6 @@ async function run() {
       const result = await purchaser.insertOne(doc);
       res.json(result);
   
-
     })
 
     } finally {
