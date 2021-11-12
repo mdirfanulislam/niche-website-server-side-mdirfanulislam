@@ -14,7 +14,7 @@ app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ufugb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-console.log(uri)
+// console.log(uri)
 async function run() {
 
     try {
@@ -24,11 +24,18 @@ async function run() {
       const carHub = database.collection("CarHub");
       const purchaser=database.collection('carOrderer');
       const reviews=database.collection('reviewHub')
+      const totalUsers=database.collection('userhub')
       // create a document to insert
     //   const result = await carHub.insertOne(doc);
     //   console.log(`A document was inserted with the _id: ${result.insertedId}`);
 
     app.get('/cars',async(req,res)=>{
+        const query={}
+        const movie =  carHub.find(query);
+        const result =await movie.toArray();
+        res.json(result);
+    })
+    app.get('/explore',async(req,res)=>{
         const query={}
         const movie =  carHub.find(query);
         const result =await movie.toArray();
@@ -46,11 +53,27 @@ async function run() {
       const result = await reviews.insertOne(doc);
       res.json(result);
     })
+    app.post('/registerUsers', async(req,res)=>{
+      const doc=req.body;
+      // console.log(doc);
+      const result = await totalUsers.insertOne(doc);
+      res.json(result);
+    })
+    app.put('/makeAdmin',async(req,res)=>{
+      const user=req.body;
+      // console.log(user);
+      const filter = { email:user.email };
+      // console.log(filter)
+      const updateDoc = {   $set: {   role:"admin"  }  };
+      const result = await totalUsers.updateOne(filter, updateDoc);
+      console.log(result)
+      res.json(result)
+    })
     app.get('/myorders', async(req,res)=>{
       // console.log(req.query);
       const email=req.query.email
       const query={email:email};
-      console.log(query)
+      // console.log(query)
       const movie =  purchaser.find(query);
       const result =await movie.toArray()
       res.json(result);
