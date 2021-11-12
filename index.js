@@ -35,6 +35,13 @@ async function run() {
         const result =await movie.toArray();
         res.json(result);
     })
+    app.post('/cars',async(req,res)=>{
+        const doc =req.body;
+        console.log(doc)
+        const result =await carHub.insertOne(doc);
+        res.json(result);
+        console.log(result)
+    })
     app.get('/explore',async(req,res)=>{
         const query={}
         const movie =  carHub.find(query);
@@ -78,6 +85,21 @@ async function run() {
       const result =await movie.toArray()
       res.json(result);
     })
+
+    // checking the admin 
+   app.get('/admins/:adminemail',async(req,res)=>{
+    const email=req.params.adminemail;
+    const query={email:email};
+    const result= await totalUsers.findOne(query);
+    let isAdmin=false ;
+    if(result.role=="admin"){
+      isAdmin=true;
+    }
+    res.json({admin:isAdmin})
+    console.log({admin:isAdmin})
+
+   })
+
     app.get('/reviews', async(req,res)=>{
       const query={}
       const movie =  reviews.find(query);
