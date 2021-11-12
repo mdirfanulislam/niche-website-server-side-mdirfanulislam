@@ -8,7 +8,7 @@ const ObjectId=require('mongodb').ObjectId;
 require('dotenv').config()
 
 
-app.use(cors());
+app.use(cors()) ;
 app.use(express.json());
 
 
@@ -22,7 +22,8 @@ async function run() {
       await client.connect();
       const database = client.db("insertToCarHub");
       const carHub = database.collection("CarHub");
-      const purchaser=database.collection('carOrderer')
+      const purchaser=database.collection('carOrderer');
+      const reviews=database.collection('reviewHub')
       // create a document to insert
     //   const result = await carHub.insertOne(doc);
     //   console.log(`A document was inserted with the _id: ${result.insertedId}`);
@@ -37,17 +38,43 @@ async function run() {
     app.get('/cars/:id',async(req,res)=>{
         const id=req.params.id;
         const query={_id:ObjectId(id)}
-        // console.log(query)
         const movie = await carHub.findOne(query);
-        // const result =await movie.toArray()
         res.json(movie);
     })
+    app.get('/myorders', async(req,res)=>{
+      // console.log(req.query);
+      const email=req.query.email
+      const query={email:email};
+      console.log(query)
+      const movie =  purchaser.find(query);
+      const result =await movie.toArray()
+      res.json(result);
+    })
+    app.get('/reviews', async(req,res)=>{
+      const query={}
+      const movie =  reviews.find(query);
+      const result =await movie.toArray();
+
+      res.json(result);
+
+    })
+    app.delete('/myorders/:id', async(req,res)=>{
+      // console.log(req.query);
+      // console.log(req.params.id)
+      const id =req.params.id;
+      const query={_id:ObjectId(id)};
+      console.log(query)
+      const result = await purchaser.deleteOne(query);
+      res.json(result)
+      console.log(result)
+    })
+
     // taking the user data and storing them 
     app.post('/users', async(req,res)=>{
       const doc=req.body;
       const result = await purchaser.insertOne(doc);
       res.json(result);
-      console.log(result)
+  
 
     })
 
