@@ -48,6 +48,36 @@ async function run() {
         const result =await movie.toArray();
         res.json(result);
     })
+    app.get('/allOrders',async(req,res)=>{
+        const query={}
+        const movie =  purchaser.find(query);
+        const result =await movie.toArray();
+        res.json(result);
+    })
+    // to update the status here 
+    app.put('/allOrders/:id',async(req,res)=>{
+      const id =req.params.id;
+      console.log(id)
+      const filter = { _id:ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          status:"Shipped "
+        } };
+        const result = await purchaser.updateOne(filter, updateDoc);
+        res.json(result);
+        console.log(result)
+    })
+    // deleteing by the admin 
+    app.delete('/allOrders/:id',async(req,res)=>{
+
+      const id =req.params.id;
+      const query={_id:ObjectId(id)};
+      console.log(query)
+      const result = await purchaser.deleteOne(query);
+      res.json(result)
+      console.log(result)
+    })
+
     app.get('/cars/:id',async(req,res)=>{
         const id=req.params.id;
         const query={_id:ObjectId(id)}
@@ -114,6 +144,16 @@ async function run() {
       const query={_id:ObjectId(id)};
       console.log(query)
       const result = await purchaser.deleteOne(query);
+      res.json(result)
+      console.log(result)
+    })
+    app.delete('/admindelete/:id', async(req,res)=>{
+      // console.log(req.query);
+      // console.log(req.params.id)
+      const id =req.params.id;
+      const query={_id:ObjectId(id)};
+      console.log(query)
+      const result = await carHub.deleteOne(query);
       res.json(result)
       console.log(result)
     })
