@@ -37,10 +37,10 @@ async function run() {
     })
     app.post('/cars',async(req,res)=>{
         const doc =req.body;
-        console.log(doc)
+        // console.log(doc)
         const result =await carHub.insertOne(doc);
         res.json(result);
-        console.log(result)
+        // console.log(result)
     })
     app.get('/explore',async(req,res)=>{
         const query={}
