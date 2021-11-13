@@ -25,9 +25,7 @@ async function run() {
       const purchaser=database.collection('carOrderer');
       const reviews=database.collection('reviewHub')
       const totalUsers=database.collection('userhub')
-      // create a document to insert
-    //   const result = await carHub.insertOne(doc);
-    //   console.log(`A document was inserted with the _id: ${result.insertedId}`);
+      
 
     app.get('/cars',async(req,res)=>{
         const query={}
@@ -37,10 +35,8 @@ async function run() {
     })
     app.post('/cars',async(req,res)=>{
         const doc =req.body;
-        // console.log(doc)
         const result =await carHub.insertOne(doc);
         res.json(result);
-        // console.log(result)
     })
     app.get('/explore',async(req,res)=>{
         const query={}
@@ -57,7 +53,6 @@ async function run() {
     // to update the status here 
     app.put('/allOrders/:id',async(req,res)=>{
       const id =req.params.id;
-      console.log(id)
       const filter = { _id:ObjectId(id) };
       const updateDoc = {
         $set: {
@@ -65,17 +60,13 @@ async function run() {
         } };
         const result = await purchaser.updateOne(filter, updateDoc);
         res.json(result);
-        console.log(result)
     })
     // deleteing by the admin 
     app.delete('/allOrders/:id',async(req,res)=>{
-
       const id =req.params.id;
       const query={_id:ObjectId(id)};
-      console.log(query)
       const result = await purchaser.deleteOne(query);
-      res.json(result)
-      console.log(result)
+      res.json(result)    
     })
 
     app.get('/cars/:id',async(req,res)=>{
@@ -86,31 +77,25 @@ async function run() {
     })
     app.post('/reviews', async(req,res)=>{
       const doc=req.body;
-      // console.log(doc);
       const result = await reviews.insertOne(doc);
       res.json(result);
     })
     app.post('/registerUsers', async(req,res)=>{
       const doc=req.body;
-      // console.log(doc);
       const result = await totalUsers.insertOne(doc);
       res.json(result);
     })
     app.put('/makeAdmin',async(req,res)=>{
       const user=req.body;
-      // console.log(user);
       const filter = { email:user.email };
-      // console.log(filter)
       const updateDoc = {   $set: {   role:"admin"  }  };
       const result = await totalUsers.updateOne(filter, updateDoc);
-      console.log(result)
       res.json(result)
     })
     app.get('/myorders', async(req,res)=>{
-      // console.log(req.query);
+     
       const email=req.query.email
       const query={email:email};
-      // console.log(query)
       const movie =  purchaser.find(query);
       const result =await movie.toArray()
       res.json(result);
@@ -126,8 +111,6 @@ async function run() {
       isAdmin=true;
     }
     res.json({admin:isAdmin})
-    console.log({admin:isAdmin})
-
    })
 
     app.get('/reviews', async(req,res)=>{
@@ -138,24 +121,17 @@ async function run() {
 
     })
     app.delete('/myorders/:id', async(req,res)=>{
-      // console.log(req.query);
-      // console.log(req.params.id)
       const id =req.params.id;
       const query={_id:ObjectId(id)};
-      console.log(query)
       const result = await purchaser.deleteOne(query);
       res.json(result)
-      console.log(result)
+     
     })
     app.delete('/admindelete/:id', async(req,res)=>{
-      // console.log(req.query);
-      // console.log(req.params.id)
       const id =req.params.id;
       const query={_id:ObjectId(id)};
-      console.log(query)
       const result = await carHub.deleteOne(query);
       res.json(result)
-      console.log(result)
     })
 
     // taking the user data and storing them 
@@ -163,11 +139,9 @@ async function run() {
       const doc=req.body;
       const result = await purchaser.insertOne(doc);
       res.json(result);
-  
     })
 
     } finally {
-  
     //   await client.close();
     }
   }
