@@ -1,55 +1,53 @@
-
 const express = require('express')
 const app = express()
-const port =process.env.PORT || 4000;
+const port =process.env.PORT || 7000;
 const { MongoClient } = require('mongodb');
 const cors=require('cors')
 const ObjectId=require('mongodb').ObjectId;
 require('dotenv').config()
 
-
 app.use(cors()) ;
 app.use(express.json());
 
-
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ufugb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.6azhy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-// console.log(uri)
+
 async function run() {
-
     try {
-  
       await client.connect();
-      const database = client.db("insertToCarHub");
-      const carHub = database.collection("CarHub");
-      const purchaser=database.collection('carOrderer');
-      const reviews=database.collection('reviewHub')
-      const totalUsers=database.collection('userhub')
+      const database = client.db("insertToCar");
+      const car = database.collection("car");
+      const purchaser = database.collection('carOrderer');
+      const reviews = database.collection('reviews')
+      const totalUsers = database.collection('users')
       
-
     app.get('/cars',async(req,res)=>{
         const query={}
-        const movie =  carHub.find(query);
+        const movie =  car.find(query);
         const result =await movie.toArray();
         res.json(result);
     })
+
     app.post('/cars',async(req,res)=>{
         const doc =req.body;
-        const result =await carHub.insertOne(doc);
+        const result =await car.insertOne(doc);
         res.json(result);
     })
+
     app.get('/explore',async(req,res)=>{
         const query={}
-        const movie =  carHub.find(query);
+        const movie =  car.find(query);
         const result =await movie.toArray();
         res.json(result);
     })
+
     app.get('/allOrders',async(req,res)=>{
         const query={}
         const movie =  purchaser.find(query);
         const result =await movie.toArray();
         res.json(result);
     })
+
     // to update the status here 
     app.put('/allOrders/:id',async(req,res)=>{
       const id =req.params.id;
@@ -61,6 +59,7 @@ async function run() {
         const result = await purchaser.updateOne(filter, updateDoc);
         res.json(result);
     })
+
     // deleteing by the admin 
     app.delete('/allOrders/:id',async(req,res)=>{
       const id =req.params.id;
@@ -72,19 +71,22 @@ async function run() {
     app.get('/cars/:id',async(req,res)=>{
         const id=req.params.id;
         const query={_id:ObjectId(id)}
-        const movie = await carHub.findOne(query);
+        const movie = await car.findOne(query);
         res.json(movie);
     })
+
     app.post('/reviews', async(req,res)=>{
       const doc=req.body;
       const result = await reviews.insertOne(doc);
       res.json(result);
     })
+
     app.post('/registerUsers', async(req,res)=>{
       const doc=req.body;
       const result = await totalUsers.insertOne(doc);
       res.json(result);
     })
+
     app.put('/makeAdmin',async(req,res)=>{
       const user=req.body;
       const filter = { email:user.email };
@@ -92,6 +94,7 @@ async function run() {
       const result = await totalUsers.updateOne(filter, updateDoc);
       res.json(result)
     })
+
     app.get('/myorders', async(req,res)=>{
      
       const email=req.query.email
@@ -118,19 +121,19 @@ async function run() {
       const movie =  reviews.find(query);
       const result =await movie.toArray();
       res.json(result);
-
     })
+
     app.delete('/myorders/:id', async(req,res)=>{
       const id =req.params.id;
       const query={_id:ObjectId(id)};
       const result = await purchaser.deleteOne(query);
       res.json(result)
-     
     })
+    
     app.delete('/admindelete/:id', async(req,res)=>{
       const id =req.params.id;
       const query={_id:ObjectId(id)};
-      const result = await carHub.deleteOne(query);
+      const result = await car.deleteOne(query);
       res.json(result)
     })
 
@@ -141,7 +144,9 @@ async function run() {
       res.json(result);
     })
 
-    } finally {
+    } 
+    
+    finally {
     //   await client.close();
     }
   }
@@ -150,7 +155,7 @@ async function run() {
 
 
 app.get('/', (req, res) => {
-  res.send('Hello World! this is mahlil mohammed  here ')
+  res.send('This is Mohammad Irfanul Islam from Chittagong')
 })
 
 app.listen(port, () => {
